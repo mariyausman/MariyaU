@@ -1,0 +1,62 @@
+class Solution {
+public:
+    unordered_map<int,bool>rowCheck;
+    unordered_map<int,bool>leftUpperDaigonal;
+    unordered_map<int,bool>leftBottomDaigonal;
+    void store(vector<vector<char>>& board,int n ,vector<vector<string>>&ans){
+        vector<string>temp;
+
+        for(int i=0;i<n;i++){
+            string output= "";
+            for(int j=0;j<n;j++){
+                output.push_back(board[i][j]);
+            }
+            temp.push_back(output);
+        }
+
+        ans.push_back(temp);
+    }
+
+    bool isSafe(vector<vector<char>>& board,int row,int col,int n){
+        if(rowCheck[row]==true)
+        return false;
+
+        if(leftUpperDaigonal[n-1+col-row]==true)
+        return false;
+
+        if(leftBottomDaigonal[row+col]==true)
+        return false;
+
+        return true;
+    }
+    void solve( vector<vector<char>>& board,int col,int n,vector<vector<string>>&ans){
+
+        if(col==n){
+            store(board,n,ans);
+            return;
+        }
+        //ek case solve kr rhe hai
+        for(int row =0;row<n;row++){
+            if(isSafe(board,row,col,n)){
+                board[row][col] ='Q';
+                rowCheck[row]=true;
+                leftUpperDaigonal[n-1+col-row]=true;
+                leftBottomDaigonal[row+col]=true;
+
+                solve(board,col+1,n,ans);
+
+                board[row][col] ='.';
+                rowCheck[row]=false;
+                leftUpperDaigonal[n-1+col-row]=false;
+                leftBottomDaigonal[row+col]=false;
+            }
+        }
+    }
+    vector<vector<string>> solveNQueens(int n) {
+      vector<vector<char> >board(n,vector<char>(n,'.'));
+      vector<vector<string> >ans;
+      int col=0;
+      solve(board,col,n,ans);
+      return ans;  
+    }
+};
